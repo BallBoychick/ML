@@ -1,18 +1,19 @@
-class Metrics:  
-    def my_accuracy_score(y_test, pred_train):
-        pass #equal
+class Metrics:
 
-# def accuracy_score_p(y_true, y_pred, *, normalize=True, sample_weight=None):
+    def My_Confusion_matrix(y_test, y_pred):
+        m = len(set(y_test))
+        size = len(y_test)
+        matrix = dict()
 
-#     # Compute accuracy for each possible representation
-#     y_type, y_true, y_pred = _check_targets(y_true, y_pred)
-#     check_consistent_length(y_true, y_pred, sample_weight)
-#     if y_type.startswith("multilabel"):
-#         differing_labels = count_nonzero(y_true - y_pred, axis=1)
-#         score = differing_labels == 0
-#     else:
-#         score = y_true == y_pred
-
-#     return _weighted_sum(score, sample_weight, normalize)
-    def my_precision(y_predicted, y_test):
-        return (y_predicted == y_test).sum()
+        for class_name in range(m):
+            matrix[class_name] = [0 for k in range(m)]
+        for i in range(size):
+            actual_class = y_test[i]
+            pred_class = y_pred[i]
+            matrix[actual_class][pred_class] += 1
+        print("Confusion Matrix :")
+        for key, value in matrix.items():
+            print("Actual %-13s %-15d %-15d %-15d" % (key, *value))
+        matrix = dict(list(zip(set(y_test), matrix.values())))
+        print(matrix)
+        return matrix
