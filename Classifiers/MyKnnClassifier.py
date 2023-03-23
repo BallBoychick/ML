@@ -1,4 +1,5 @@
 import statistics
+import numpy as np
 from statistics import mode
 def euclid_distance(a, b):
     return sum(((a-b)**2).T)**0.5/a.shape[0]
@@ -19,4 +20,4 @@ class My_Knn_classifier:
         distance = euclid_distance(j, self.X_train)
         nearest_neighbor_ids = self.y_train[distance.argsort()[:self.n_neighbours]]
         pred.append(mode(list(nearest_neighbor_ids)))
-      return print(pred)
+      return np.array(pred)
