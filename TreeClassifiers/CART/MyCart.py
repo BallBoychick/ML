@@ -89,7 +89,7 @@ class Node:
         # print("YES")
         # print("D_MD", self.depth, max_depth)
         # print("N_MIN", self.num_samples, min_samples_split)
-        if (self.depth <= max_depth) or (self.num_samples <= min_samples_split):
+        if (self.depth < max_depth) and (self.num_samples > min_samples_split):
             # print("YES2")
             below = self.data[self.data[self.opt_feature] < self.opt_split]
             above = self.data[self.data[self.opt_feature] > self.opt_split]
