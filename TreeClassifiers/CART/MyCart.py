@@ -38,17 +38,12 @@ class Node:
 
   def get_possible_splits(self, features): #????
     unique_values = np.unique(self.X[features])
-    # if len(unique_values) == 1:
-    #   return 0
-    return mean(unique_values)
+    return (unique_values[1:] + unique_values[:-1])/2
 
   def get_split_gini(self, features, split_point):
     #разделили на below above
-    # if len(self.data[self.data[features]]) > 1
     below = self.data[self.data[features] < split_point]
     above = self.data[self.data[features] > split_point]
-    if len(below) and len(above) == 1:
-      return 0
 
     #посчитали, сколько каждого класса в них  
     below_counts = self.get_counts(below[self.y_col].to_list())
@@ -72,16 +67,16 @@ class Node:
     opt_gini_reduction = 0 # We want to maximize this
     for feature in self.features:
       possible_splits = self.get_possible_splits(feature)
-      # for split in possible_splits:
-      split_gini = self.get_split_gini(feature, possible_splits)
-      gini_reduction = self.gini - split_gini
-      # print("gini", self.gini, "minus", split_gini)
-      # print("gini_reduction", gini_reduction)
+      for split in possible_splits:
+        split_gini = self.get_split_gini(feature, split)
+        gini_reduction = self.gini - split_gini
+        # print("gini", self.gini, "minus", split_gini)
+        # print("gini_reduction", gini_reduction)
 
-      if gini_reduction > opt_gini_reduction:
-          opt_gini_reduction = gini_reduction
-        #  print("opt_gini_reduction", opt_gini_reduction)
-          opt_feature, opt_split = feature, possible_splits
+        if gini_reduction > opt_gini_reduction:
+           opt_gini_reduction = gini_reduction
+          #  print("opt_gini_reduction", opt_gini_reduction)
+           opt_feature, opt_split = feature, split
 
     return opt_feature, opt_split
   
@@ -90,11 +85,11 @@ class Node:
   def make_split(self, max_depth, min_samples_split):
     self.opt_feature, self.opt_split = self.get_opt_split()
     # print("OPT", self.opt_feature)
-    if self.opt_feature != None:
+    if self.opt_feature is not None:
         # print("YES")
         # print("D_MD", self.depth, max_depth)
         # print("N_MIN", self.num_samples, min_samples_split)
-        if (self.depth < max_depth) or (self.num_samples > min_samples_split)  or (self.num_samples != 2):
+        if (self.depth <= max_depth) or (self.num_samples <= min_samples_split):
             # print("YES2")
             below = self.data[self.data[self.opt_feature] < self.opt_split]
             above = self.data[self.data[self.opt_feature] > self.opt_split]
@@ -114,7 +109,6 @@ class Node:
 
             # if self.methood == "entorpy":
             #   dsadasd
-
 
 class CART:  
   def __init__(self, max_depth, min_samples_split, task = None):
