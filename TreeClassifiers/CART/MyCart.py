@@ -6,7 +6,7 @@ from statistics import mean
 
 class Node:
 
-  def __init__(self, data, y_col, depth, methood = None):
+  def __init__(self, data, y_col, depth):
     self.data = data
     self.y_col = y_col
     self.depth = depth
@@ -19,7 +19,7 @@ class Node:
     self.gini = self.get_gini(self.counts)
 
     self.num_samples = len(self.y)
-
+    
     self.predicted_label = np.argmax(list(self.counts.values()))
 
     self.left = None
@@ -36,7 +36,7 @@ class Node:
 
   def get_split_gini(self, features, split_point):
     #разделили на below above
-    below = self.data[self.data[features] < split_point]
+    below = self.data[self.data[features] <= split_point]
     above = self.data[self.data[features] > split_point]
 
     #посчитали, сколько каждого класса в них  
@@ -57,8 +57,8 @@ class Node:
     opt_gini_reduction = 0 # We want to maximize this
     for feature in self.features:
       # possible_splits = self.get_possible_splits(feature)
-      df_splits = sorted(self.data[feature])
-      possible_splits = df_splits[1: -1]
+      df_splits = np.unique(self.X[feature])
+      possible_splits = (df_splits [1:] + df_splits [:-1])/2
       for split in possible_splits:
         split_gini = self.get_split_gini(feature, split)
         gini_reduction = self.gini - split_gini
@@ -75,7 +75,7 @@ class Node:
     self.opt_feature, self.opt_split = self.get_opt_split()
     if self.opt_feature is not None:
         if (self.depth < max_depth) and (self.num_samples > min_samples_split):
-            below = self.data[self.data[self.opt_feature] < self.opt_split]
+            below = self.data[self.data[self.opt_feature] <= self.opt_split]
             above = self.data[self.data[self.opt_feature] > self.opt_split]
             
             self.left = Node(below, 'target', depth = self.depth + 1)
