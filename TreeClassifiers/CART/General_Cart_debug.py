@@ -5,12 +5,23 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import json
 
-videogame = '{"console": [0.36, 0.15, 0.34, 0.95, 0.63, 0.11, 0.022, 0.07, 0.14, 0.27, 0.35], "games": [0.35, 0.25, 0.2, 0.121, 0.62, 0.11, 0.02, 0.35,  0.50, 0.16, 0.75], "target": [0, 1, 2, 2, 0, 2, 2, 0, 1, 2, 2]}'
-dict = json.loads(videogame)
-df2 = pd.DataFrame.from_dict(dict)
+#-----------------------Debug-Regr-----------------------------------------#
+# videogame = '{"console": [0.36, 0.15, 0.34, 0.95, 0.63, 0.11, 0.022, 0.07, 0.14, 0.27, 0.35], "games": [0.35, 0.25, 0.2, 0.121, 0.62, 0.11, 0.02, 0.35,  0.50, 0.16, 0.75], "target": [1.25, 6.84, 8.98, 3.21, 4.4, 5.14, 5.67, 5.22, 3.45, 5.88, 2.22]}'
+# dict = json.loads(videogame)
+# df2 = pd.DataFrame.from_dict(dict)
 
-train2 = df2.sample(frac = 0.8, random_state = 69)
-test2 = df2.drop(train2.index).reset_index(drop = True)
+# train2 = df2.sample(frac = 0.8, random_state = 69)
+# print(train2)
+# test2 = df2.drop(train2.index).reset_index(drop = True)
+# print(test2)
+
+#-------------------Debug-Class----------------------------#
+# videogame = '{"console": [0.36, 0.15, 0.34, 0.95, 0.63, 0.11, 0.022, 0.07, 0.14, 0.27, 0.35], "games": [0.35, 0.25, 0.2, 0.121, 0.62, 0.11, 0.02, 0.35,  0.50, 0.16, 0.75], "target": [0, 1, 2, 2, 0, 2, 2, 0, 1, 2, 2]}'
+# dict = json.loads(videogame)
+# df2 = pd.DataFrame.from_dict(dict)
+
+# train2 = df2.sample(frac = 0.8, random_state = 69)
+# test2 = df2.drop(train2.index).reset_index(drop = True)
 # print("TR\n", train2)
 # print("Te\n",test2)
 

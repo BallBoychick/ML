@@ -72,8 +72,8 @@ class Node:
             below = self.data[self.data[self.opt_feature] <= self.opt_split]
             above = self.data[self.data[self.opt_feature] > self.opt_split]
             
-            self.left = Node(below, 'target', depth = self.depth + 1, methood=GetMetrics.get_gini, pred=GetMetrics.get_pred_class, counter=GetMetrics.get_counts_class)
-            self.right = Node(above, 'target', depth = self.depth + 1, methood=GetMetrics.get_gini, pred=GetMetrics.get_pred_class, counter=GetMetrics.get_counts_class)
+            self.left = Node(below, "price_usd", depth = self.depth + 1, methood=GetMetrics.get_mse, pred=GetMetrics.get_pred_regr, counter=GetMetrics.get_counts_regr)
+            self.right = Node(above, "price_usd", depth = self.depth + 1, methood=GetMetrics.get_mse, pred=GetMetrics.get_pred_regr, counter=GetMetrics.get_counts_regr)
             #Reccurence hahahahahah
             self.left.make_split(max_depth, min_samples_split)
             self.right.make_split(max_depth, min_samples_split)
@@ -84,7 +84,7 @@ class CART:
     self.min_samples_split = min_samples_split
 
   def train(self, train):
-    self.root = Node(train, 'target', depth = 0, methood=GetMetrics.get_gini, pred=GetMetrics.get_pred_class, counter=GetMetrics.get_counts_class)
+    self.root = Node(train, "price_usd", depth = 0, methood=GetMetrics.get_mse, pred=GetMetrics.get_pred_regr, counter=GetMetrics.get_counts_regr)
     self.root.make_split(self.max_depth, self.min_samples_split)
 
   def predict_one(self, row):
