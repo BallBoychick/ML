@@ -5,7 +5,7 @@ def softmax(z):
   '''Return the softmax output of a vector.'''
   exp_z = np.exp(z)
   sum = exp_z.sum()
-  softmax_z = np.round(exp_z/sum,3)
+  softmax_z = (exp_z/sum)
   A = softmax_z
   cache = z
   return A, cache
@@ -47,12 +47,9 @@ def linear_activation_forward(A_prev, W, b, activation):
     elif activation == "softmax":
         # Inputs: "A_prev, W, b". Outputs: "A, activation_cache".
         Z, linear_cache = linear_forward(A_prev, W, b)
+        print("Z_soft", Z)
         A, activation_cache = softmax(Z)
-    
-    # print("\nA", A.shape)
-    # print("W", W.shape)
-    # print("A_prev", A_prev.shape)
-    # A_prev = A_prev.T
+        print("AAAAA", A)
     assert (A.shape == (W.shape[0], A_prev.shape[1]))
     cache = (linear_cache, activation_cache)
 
@@ -63,21 +60,21 @@ def L_model_forward(X, parameters):
     caches = []
     A = X
     L = len(parameters) // 2                  # number of layers in the neural network
-    
-    # Implement [LINEAR -> RELU]*(L-1). Add "cache" to the "caches" list.
+
     for l in range(1, L):
         A_prev = A 
         A, cache = linear_activation_forward(A_prev, parameters['W' + str(l)], parameters['b' + str(l)], activation = "relu")
         caches.append(cache)
+
+    # print("AAAAAAA", A)
     
-    # Implement LINEAR -> SIGMOID. Add "cache" to the "caches" list.
     AL, cache = linear_activation_forward(A, parameters['W' + str(L)], parameters['b' + str(L)], activation = "softmax")
     caches.append(cache)
-    # print("AL", AL.shape)
-    # print("X", X.shape[1])
+
     assert(AL.shape == (3,X.shape[1]))
-    # print("AL", AL.shape)        
-    # print("AL", AL)  
+
+    print("ALLLLLLLL", AL) 
+
     return AL, caches
 
 
@@ -87,7 +84,7 @@ def compute_cost(AL, Y):
 
     # Compute loss from aL and y.
     cost = (1./m) * (-np.dot(Y,np.log(AL).T) - np.dot(1-Y, np.log(1-AL).T))
-    print(cost)
+    # print(cost)
     cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
     # assert(cost.shape == ())
 
@@ -260,7 +257,7 @@ class NeuralWeb:
         L = len(layer_dims)            # number of layers in the network
 
         for l in range(1, L):
-            parameters['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) / np.sqrt(layer_dims[l-1]) *0.01
+            parameters['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) / np.sqrt(layer_dims[l-1]) #* 0.01
             parameters['b' + str(l)] = np.zeros((layer_dims[l], 1))
             
             # assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
@@ -272,11 +269,11 @@ class NeuralWeb:
     def iterations(self, num_iterations):
         for i in range(0, num_iterations):
             AL, caches = L_model_forward(self.X.T, self.initialize)
-
+            print("YES")
             cost = compute_cost(AL, self.Y)
 
             # grads =  L_model_backward(AL, self.Y, caches)
-        return self.initialize, cost
+        return AL.T
 
     # def predict(self, X, y, parameters):
     #     m = X.shape[1]
