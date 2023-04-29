@@ -3,13 +3,20 @@ import scipy
 
 def softmax(z):
   '''Return the softmax output of a vector.'''
-  exp_z = np.exp(z)
-  sum = exp_z.sum()
-  softmax_z = (exp_z/sum)
-  A = softmax_z
-  cache = z
-  return A, cache
- 
+#   exp_z = np.exp(z)
+#   sum = exp_z.sum()
+#   softmax_z = (exp_z/sum)
+#   A = softmax_z
+#   cache = z
+#   return A, cache
+  A = []
+  for i in z:
+    exp_z = np.exp(i)
+    sum = exp_z.sum()
+    softmax_z = (exp_z/sum)
+    A.append(softmax_z)
+    cache = z
+  return np.asarray(A), cache
 def sigmoid(Z):
     
     A = 1/(1+np.exp(-Z))
@@ -31,6 +38,7 @@ def linear_forward(A, W, b):
     Z = np.dot(W, A) + b
     assert(Z.shape == (W.shape[0], A.shape[1]))
     cache = (A, W, b)
+    # print("Z", Z)
     return Z, cache
 
 def linear_activation_forward(A_prev, W, b, activation):  
@@ -47,9 +55,9 @@ def linear_activation_forward(A_prev, W, b, activation):
     elif activation == "softmax":
         # Inputs: "A_prev, W, b". Outputs: "A, activation_cache".
         Z, linear_cache = linear_forward(A_prev, W, b)
-        print("Z_soft", Z)
+        # print("Z_soft", Z)
         A, activation_cache = softmax(Z)
-        print("AAAAA", A)
+        # print("AAAAA", A)
     assert (A.shape == (W.shape[0], A_prev.shape[1]))
     cache = (linear_cache, activation_cache)
 
@@ -73,7 +81,7 @@ def L_model_forward(X, parameters):
 
     assert(AL.shape == (3,X.shape[1]))
 
-    print("ALLLLLLLL", AL) 
+    # print("ALLLLLLLL", AL) 
 
     return AL, caches
 
@@ -236,6 +244,7 @@ def update_parameters(parameters, grads, learning_rate):
 #     print("Accuracy: "  + str(np.sum((p == y)/m)))
         
     # return p
+#-------------------Class---------------------------------#
 class NeuralWeb:
     def __init__(self, X, Y, layers_dims, learning_rate, num_iterations):
         self.X = X.to_numpy()
@@ -246,7 +255,7 @@ class NeuralWeb:
 
         self.initialize = self.initialize_parameters_deep(self.layers_dims)
 
-        # self.pred = self.predict(self.X, self.Y, self.initialize)
+        self.pred = self.predict(self.X, self.Y, self.initialize)
 
 
         self.iters = self.iterations(self.num_iterations)
@@ -273,27 +282,34 @@ class NeuralWeb:
             cost = compute_cost(AL, self.Y)
 
             # grads =  L_model_backward(AL, self.Y, caches)
-        return AL.T
+        return AL
 
-    # def predict(self, X, y, parameters):
-    #     m = X.shape[1]
-    #     n = len(parameters) // 2 # number of layers in the neural network
-    #     p = np.zeros((1,m))
+    def predict(self, X, y, parameters):
+        m = X.shape[1]
+        n = len(parameters) // 2 # number of layers in the neural network
+        p = np.zeros((1,m))
         
-    #     # Forward propagation
-    #     probas, caches = L_model_forward(self.X.T, parameters)
+        # Forward propagation
+        probas, caches = L_model_forward(self.X.T, parameters)
 
         
-    #     # convert probas to 0/1 predictions
-    #     # for i in range(0, probas.shape[1]):
-    #     #     if probas[0,i] > 0.5:
-    #     #         p[0,i] = 1
-    #     #     else:
-    #     #         p[0,i] = 0
+        # convert probas to 0/1 predictions
+        # for i in range(0, probas.shape[1]):
+        #     if probas[0,i] > 0.5:
+        #         p[0,i] = 1
+        #     else:
+        #         p[0,i] = 0
         
-    #     #print results
-    #     #print ("predictions: " + str(p))
-    #     #print ("true labels: " + str(y))
-    #     # print("Accuracy: "  + str(np.sum((p == y)/m)))
-    #     return probas
+        #print results
+        #print ("predictions: " + str(p))
+        #print ("true labels: " + str(y))
+        # print("Accuracy: "  + str(np.sum((p == y)/m)))
+
+        r2 = np.reshape(probas, (probas.shape[1], probas.shape[0]))
+
+        Final = []
+        for i in r2:
+            Final.append(np.argmax(i))
+                
+        return Final
 
