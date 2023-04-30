@@ -67,26 +67,26 @@ def L_model_forward(X, parameters):
 
     caches = []
     A = X
+    # print("X", X.shape)
     L = len(parameters) // 2                  # number of layers in the neural network
 
     for l in range(1, L):
         A_prev = A 
         A, cache = linear_activation_forward(A_prev, parameters['W' + str(l)], parameters['b' + str(l)], activation = "relu")
         caches.append(cache)
-
-    # print("AAAAAAA", A)
+        # print("AAAAAAA", A.shape)
     
     AL, cache = linear_activation_forward(A, parameters['W' + str(L)], parameters['b' + str(L)], activation = "softmax")
     caches.append(cache)
 
     assert(AL.shape == (3,X.shape[1]))
-
-    # print("ALLLLLLLL", AL) 
+    # print("ALLLLLLLL", AL.shape) 
 
     return AL, caches
 
 
 def compute_cost(AL, Y):
+    #FIX COST FOR MULTICLASS
     # print("Y", Y.shape)
     m = Y.shape[0]
 
@@ -102,28 +102,30 @@ def compute_cost(AL, Y):
 
 #----------------------------------Start-BackWord------------------------------------------------------#
 def softmax_backword(dA, cache):
-    Z = cache
-    m, n = Z.shape
-    p = softmax(Z)
-  # First we create for each example feature vector, it's outer product with itself
-    # ( p1^2  p1*p2  p1*p3 .... )
-    # ( p2*p1 p2^2   p2*p3 .... )
-    # ( ...                     )
-    tensor1 = np.einsum('ij,ik->ijk', p, p)  # (m, n, n)
-    # Second we need to create an (n,n) identity of the feature vector
-    # ( p1  0  0  ...  )
-    # ( 0   p2 0  ...  )
-    # ( ...            )
-    tensor2 = np.einsum('ij,jk->ijk', p, np.eye(n, n))  # (m, n, n)
-    # Then we need to subtract the first tensor from the second
-    # ( p1 - p1^2   -p1*p2   -p1*p3  ... )
-    # ( -p1*p2     p2 - p2^2   -p2*p3 ...)
-    # ( ...                              )
-    dSoftmax = tensor2 - tensor1
-    # Finally, we multiply the dSoftmax (da/dz) by da (dL/da) to get the gradient w.r.t. Z
-    dZ = np.einsum('ijk,ik->ij', dSoftmax, dA)  # (m, n)
+#     Z = cache
+#     m, n = Z.shape
+#     p = softmax(Z)
+#   # First we create for each example feature vector, it's outer product with itself
+#     # ( p1^2  p1*p2  p1*p3 .... )
+#     # ( p2*p1 p2^2   p2*p3 .... )
+#     # ( ...                     )
+#     tensor1 = np.einsum('ij,ik->ijk', p, p)  # (m, n, n)
+#     # Second we need to create an (n,n) identity of the feature vector
+#     # ( p1  0  0  ...  )
+#     # ( 0   p2 0  ...  )
+#     # ( ...            )
+#     tensor2 = np.einsum('ij,jk->ijk', p, np.eye(n, n))  # (m, n, n)
+#     # Then we need to subtract the first tensor from the second
+#     # ( p1 - p1^2   -p1*p2   -p1*p3  ... )
+#     # ( -p1*p2     p2 - p2^2   -p2*p3 ...)
+#     # ( ...                              )
+#     dSoftmax = tensor2 - tensor1
+#     # Finally, we multiply the dSoftmax (da/dz) by da (dL/da) to get the gradient w.r.t. Z
+#     dZ = np.einsum('ijk,ik->ij', dSoftmax, dA)  # (m, n)
 
-    return dZ
+#     return dZ
+    n = np.size(dA)
+    return np.dot((np.identity(n) - dA.T) * dA, dA)
  
 
 
@@ -191,11 +193,16 @@ def L_model_backward(AL, Y, caches):
     grads = {}
     L = len(caches) # the number of layers
     m = AL.shape[1]
-    Y = Y.reshape(AL.shape) # after this line, Y is the same shape as AL
-    
+    print("ALL", AL)
+    # print("ALL.shape", AL.shape)
+    # print("YYYY_before", type(Y))
+    # Y = Y.reshape(AL.shape[0], AL.shape[1]) # after this line, Y is the same shape as AL
+    # Y = np.reshape(Y * 3, (3, len(Y)))
+    Y = np.array([Y]*3)
+    print("YYYY_after", Y)
     # Initializing the backpropagation
     dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))
-    
+    print("dAL", dAL)
     # Lth layer (SIGMOID -> LINEAR) gradients. Inputs: "AL, Y, caches". Outputs: "grads["dAL"], grads["dWL"], grads["dbL"]
     current_cache = caches[L-1]
     grads["dA" + str(L-1)], grads["dW" + str(L)], grads["db" + str(L)] = linear_activation_backward(dAL, current_cache, activation = "softmax")
@@ -281,8 +288,12 @@ class NeuralWeb:
             print("YES")
             cost = compute_cost(AL, self.Y)
 
-            # grads =  L_model_backward(AL, self.Y, caches)
-        return AL
+            grads =  L_model_backward(AL, self.Y, caches)
+
+            update_parameters(self.initialize, grads, self.learning_rate)
+
+        # return AL
+        return self.initialize
 
     def predict(self, X, y, parameters):
         m = X.shape[1]

@@ -59,7 +59,7 @@ P = current
 
 r2 = np.reshape(P, (7, 3))
 print("R2", r2)
-print("--------------------------------", r2[1])
+# print("--------------------------------", r2[1])
 
 # n = 0
 # while n != len(current):
@@ -72,4 +72,9 @@ Final = []
 for i in r2:
   Final.append(np.argmax(i))
 
-print(Final)
+#-----------------Debug-dAL------------####
+# print(len(Final))
+Y = [2, 1, 0, 2, 0, 2, 0]
+arr = np.array(Y * 3).reshape(3, 7)
+# Y = np.reshape(Y * 3 , (3, len(Y)))
+print(arr)

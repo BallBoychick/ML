@@ -17,7 +17,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=1/3)
 layers_dims = [2, 4, 3]
 neur = NeuralWeb(X_train, y_train, layers_dims,  learning_rate=0.0075, num_iterations = 5)
 # print(neur.initialize) #work
-# print(neur.iters) #work
+print(neur.iters) #work
 print(neur.pred)
 
 
