@@ -3,20 +3,23 @@ import scipy
 
 def softmax(z):
   '''Return the softmax output of a vector.'''
-#   exp_z = np.exp(z)
-#   sum = exp_z.sum()
-#   softmax_z = (exp_z/sum)
-#   A = softmax_z
-#   cache = z
-#   return A, cache
+  r1 = np.reshape(z, (len(z[1]), len(z)))
   A = []
-  for i in z:
+  for i in r1:
     exp_z = np.exp(i)
     sum = exp_z.sum()
     softmax_z = (exp_z/sum)
     A.append(softmax_z)
     cache = z
   return np.asarray(A), cache
+#   A = []
+#   for i in z:
+#     exp_z = np.exp(i)
+#     sum = exp_z.sum()
+#     softmax_z = (exp_z/sum)
+#     A.append(softmax_z)
+#     cache = z
+#   return np.asarray(A), cache
 def sigmoid(Z):
     
     A = 1/(1+np.exp(-Z))
@@ -34,11 +37,10 @@ def relu(Z):
     return A, cache
 
 def linear_forward(A, W, b):
-    # A = A.T  
     Z = np.dot(W, A) + b
     assert(Z.shape == (W.shape[0], A.shape[1]))
     cache = (A, W, b)
-    # print("Z", Z)
+    print("Z", Z)
     return Z, cache
 
 def linear_activation_forward(A_prev, W, b, activation):  
@@ -58,7 +60,7 @@ def linear_activation_forward(A_prev, W, b, activation):
         # print("Z_soft", Z)
         A, activation_cache = softmax(Z)
         # print("AAAAA", A)
-    assert (A.shape == (W.shape[0], A_prev.shape[1]))
+    # assert (A.shape == (W.shape[0], A_prev.shape[1]))
     cache = (linear_cache, activation_cache)
 
     return A, cache
@@ -75,11 +77,12 @@ def L_model_forward(X, parameters):
         A, cache = linear_activation_forward(A_prev, parameters['W' + str(l)], parameters['b' + str(l)], activation = "relu")
         caches.append(cache)
         # print("AAAAAAA", A.shape)
-    
+    # print("AAAA", A)
     AL, cache = linear_activation_forward(A, parameters['W' + str(L)], parameters['b' + str(L)], activation = "softmax")
     caches.append(cache)
+    print("AL", AL)
 
-    assert(AL.shape == (3,X.shape[1]))
+    # assert(AL.shape == (3,X.shape[1]))
     # print("ALLLLLLLL", AL.shape) 
 
     return AL, caches
@@ -101,31 +104,11 @@ def compute_cost(AL, Y):
 
 
 #----------------------------------Start-BackWord------------------------------------------------------#
-def softmax_backword(dA, cache):
+# def softmax_backword(dA, cache):
 #     Z = cache
-#     m, n = Z.shape
-#     p = softmax(Z)
-#   # First we create for each example feature vector, it's outer product with itself
-#     # ( p1^2  p1*p2  p1*p3 .... )
-#     # ( p2*p1 p2^2   p2*p3 .... )
-#     # ( ...                     )
-#     tensor1 = np.einsum('ij,ik->ijk', p, p)  # (m, n, n)
-#     # Second we need to create an (n,n) identity of the feature vector
-#     # ( p1  0  0  ...  )
-#     # ( 0   p2 0  ...  )
-#     # ( ...            )
-#     tensor2 = np.einsum('ij,jk->ijk', p, np.eye(n, n))  # (m, n, n)
-#     # Then we need to subtract the first tensor from the second
-#     # ( p1 - p1^2   -p1*p2   -p1*p3  ... )
-#     # ( -p1*p2     p2 - p2^2   -p2*p3 ...)
-#     # ( ...                              )
-#     dSoftmax = tensor2 - tensor1
-#     # Finally, we multiply the dSoftmax (da/dz) by da (dL/da) to get the gradient w.r.t. Z
-#     dZ = np.einsum('ijk,ik->ij', dSoftmax, dA)  # (m, n)
-
+#     dZ = dA * Z
+    
 #     return dZ
-    n = np.size(dA)
-    return np.dot((np.identity(n) - dA.T) * dA, dA)
  
 
 
@@ -188,23 +171,23 @@ def linear_activation_backward(dA, cache, activation):
     
     return dA_prev, dW, db
 
+def to_full_batch(y, num_classes):
+    y_full = np.zeros((len(y), num_classes))
+    for j, yj in enumerate(y):
+        y_full[j, yj] = 1
+    return y_full
 
 def L_model_backward(AL, Y, caches):
     grads = {}
     L = len(caches) # the number of layers
     m = AL.shape[1]
-    print("ALL", AL)
-    # print("ALL.shape", AL.shape)
-    # print("YYYY_before", type(Y))
-    # Y = Y.reshape(AL.shape[0], AL.shape[1]) # after this line, Y is the same shape as AL
-    # Y = np.reshape(Y * 3, (3, len(Y)))
-    Y = np.array([Y]*3)
-    print("YYYY_after", Y)
-    # Initializing the backpropagation
-    dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))
+    # print("ALL", AL)
+    # print("Y", Y)
+    dAL = AL - to_full_batch(Y, len(AL[1]))
     print("dAL", dAL)
     # Lth layer (SIGMOID -> LINEAR) gradients. Inputs: "AL, Y, caches". Outputs: "grads["dAL"], grads["dWL"], grads["dbL"]
     current_cache = caches[L-1]
+    print("current_cache", current_cache)
     grads["dA" + str(L-1)], grads["dW" + str(L)], grads["db" + str(L)] = linear_activation_backward(dAL, current_cache, activation = "softmax")
     
     for l in reversed(range(L-1)):
@@ -286,7 +269,8 @@ class NeuralWeb:
         for i in range(0, num_iterations):
             AL, caches = L_model_forward(self.X.T, self.initialize)
             print("YES")
-            cost = compute_cost(AL, self.Y)
+            #FIX coast
+            # cost = compute_cost(AL, self.Y)
 
             grads =  L_model_backward(AL, self.Y, caches)
 
@@ -302,24 +286,8 @@ class NeuralWeb:
         
         # Forward propagation
         probas, caches = L_model_forward(self.X.T, parameters)
-
-        
-        # convert probas to 0/1 predictions
-        # for i in range(0, probas.shape[1]):
-        #     if probas[0,i] > 0.5:
-        #         p[0,i] = 1
-        #     else:
-        #         p[0,i] = 0
-        
-        #print results
-        #print ("predictions: " + str(p))
-        #print ("true labels: " + str(y))
-        # print("Accuracy: "  + str(np.sum((p == y)/m)))
-
-        r2 = np.reshape(probas, (probas.shape[1], probas.shape[0]))
-
         Final = []
-        for i in r2:
+        for i in probas:
             Final.append(np.argmax(i))
                 
         return Final

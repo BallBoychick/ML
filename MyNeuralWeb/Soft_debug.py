@@ -31,17 +31,30 @@ import scipy
 #      [0.25, 0.67, 0.02],
 #      [0.41, 0.22, 0.73]]
 
-current = [[0.128434,   0.15939891, 0.12135223, 0.15714838, 0.1277097,  0.14918196,
-  0.15677481],
- [0.13157441, 0.15668593, 0.12568084, 0.15486559, 0.1304949,  0.14833482,
-  0.15236351],
- [0.14632592, 0.13902159, 0.14830776, 0.13948669, 0.14643272, 0.14119381,
-  0.13923151]]
+# current = [[0.128434,   0.15939891, 0.12135223, 0.15714838, 0.1277097,  0.14918196,
+#   0.15677481],
+#  [0.13157441, 0.15668593, 0.12568084, 0.15486559, 0.1304949,  0.14833482,
+#   0.15236351],
+#  [0.14632592, 0.13902159, 0.14830776, 0.13948669, 0.14643272, 0.14119381,
+#   0.13923151]]
+
+Z_current = [[-0.01421951, -0.38424707,  0.,         -0.06624317, -0.2727126,  -0.01659951,
+  -0.21599479],
+ [-0.01168576, -0.31734796,  0.,         -0.05477136, -0.22049771, -0.02797414,
+  -0.17467084],
+ [ 0.00333997,  0.08999278,  0.,          0.01550427,  0.06466031,  0.00150889,
+   0.05120724]]
+
+# print(len(Z_current[1]))
+
+# r1 = np.reshape(Z_current, (len(Z_current[1]), len(Z_current)))
+# print("R@",r1)
 
 def softmax(z):
   '''Return the softmax output of a vector.'''
+  r1 = np.reshape(z, (len(z[1]), len(z)))
   A = []
-  for i in B:
+  for i in r1:
     exp_z = np.exp(i)
     sum = exp_z.sum()
     softmax_z = (exp_z/sum)
@@ -49,16 +62,16 @@ def softmax(z):
     cache = z
   return np.asarray(A)
 
-# print("S1",softmax(B))
+print("S1",softmax(Z_current))
 
 #--------------Debug_pred--------------#
-P = current
-# print("P", P)
+# P = softmax(r1)
+# # print("P", P)
 
-# print(P[0][0])
+# # print(P[0][0])
 
-r2 = np.reshape(P, (7, 3))
-print("R2", r2)
+# r2 = np.reshape(P, (7, 3))
+# print("R2", r2)
 # print("--------------------------------", r2[1])
 
 # n = 0
@@ -68,13 +81,57 @@ print("R2", r2)
 #   print("ITER")
 #   n+=1
 
-Final = []
-for i in r2:
-  Final.append(np.argmax(i))
+# Final = []
+# for i in P:
+#   Final.append(np.argmax(i))
+
+# print("FINAL\n", Final)
 
 #-----------------Debug-dAL------------####
 # print(len(Final))
-Y = [2, 1, 0, 2, 0, 2, 0]
-arr = np.array(Y * 3).reshape(3, 7)
-# Y = np.reshape(Y * 3 , (3, len(Y)))
-print(arr)
+# Y = [2, 1, 0, 2, 0, 2, 0]
+# arr = np.array(Y * 3).reshape(3, 7)
+# # Y = np.reshape(Y * 3 , (3, len(Y)))
+# print(arr)
+
+#-----------------Debug-Softmax_back---------------------#
+
+
+
+# dAL = [[ -6.38693026, -17.23397614, -13.61833247, -25.59949897,   1.19510167,
+#   -13.64739958, -14.27043906],
+#  [ -6.48698741, -16.71713008, -13.82363931, -22.92768378,   1.19067969,
+#   -14.02753938, -14.3706025, ],
+#  [ -7.30180235, -14.98481552, -15.84684867, -12.7893122,    1.15700586,
+#   -15.87343678, -15.67148406]]
+
+# def backward(output_gradient):
+#         # This version is faster than the one presented in the video
+#         n = np.size(current)
+#         return np.dot((np.identity(n) - current.T) * current, output_gradient)
+
+
+# print(backward(dAL))
+
+#-------------
+def softmax_batch(t):
+    out = np.exp(t)
+    return out / np.sum(out, axis=1, keepdims=True)
+
+# print("SF\n", softmax_batch(Z_current))
+Y = [2, 2, 0, 2, 0, 2, 1]
+def to_full(y, num_classes):
+    y_full = np.zeros((1, num_classes))
+    y_full[0, y] = 1
+    return y_full
+
+def to_full_batch(y, num_classes):
+    y_full = np.zeros((len(y), num_classes))
+    for j, yj in enumerate(y):
+        y_full[j, yj] = 1
+    return y_full
+print(Y)
+print(to_full_batch(Y, 3))
+
+print("Z - y_full\n", softmax(Z_current) - to_full_batch(Y, 3))
+print(len(softmax(Z_current)[1]))
