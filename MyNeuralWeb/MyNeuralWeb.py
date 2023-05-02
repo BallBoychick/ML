@@ -40,14 +40,14 @@ def linear_forward(A, W, b):
     Z = np.dot(W, A) + b
     assert(Z.shape == (W.shape[0], A.shape[1]))
     cache = (A, W, b)
-    print("Z", Z)
+    # print("Z", Z)
     return Z, cache
 
 def linear_activation_forward(A_prev, W, b, activation):  
     if activation == "sigmoid":
         # Inputs: "A_prev, W, b". Outputs: "A, activation_cache".
-        Z, linear_cache = linear_forward(A_prev, W, b)
-        A, activation_cache = sigmoid(Z)
+        Z, linear_cache = linear_forward(A_prev, W, b) #save (A, W, b)
+        A, activation_cache = sigmoid(Z) #save argument of Z
     
     elif activation == "relu":
         # Inputs: "A_prev, W, b". Outputs: "A, activation_cache".
@@ -80,7 +80,7 @@ def L_model_forward(X, parameters):
     # print("AAAA", A)
     AL, cache = linear_activation_forward(A, parameters['W' + str(L)], parameters['b' + str(L)], activation = "softmax")
     caches.append(cache)
-    print("AL", AL)
+    # print("AL", AL)
 
     # assert(AL.shape == (3,X.shape[1]))
     # print("ALLLLLLLL", AL.shape) 
@@ -91,24 +91,31 @@ def L_model_forward(X, parameters):
 def compute_cost(AL, Y):
     #FIX COST FOR MULTICLASS
     # print("Y", Y.shape)
-    m = Y.shape[0]
+    # m = Y.shape[0]
+    # y2 = y.to_numpy()
+    Y = [int(Y) for Y in Y]
+    # # Compute loss from aL and y.
+    # cost = (1./m) * (-np.dot(Y,np.log(AL).T) - np.dot(1-Y, np.log(1-AL).T))
+    # # print(cost)
+    # cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
+    # # assert(cost.shape == ())
+    # print("YYYY", Y)
+    E = -np.log(np.array([AL[j, Y[j]] for j in range(len(Y))]))
 
-    # Compute loss from aL and y.
-    cost = (1./m) * (-np.dot(Y,np.log(AL).T) - np.dot(1-Y, np.log(1-AL).T))
-    # print(cost)
-    cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
-    # assert(cost.shape == ())
+    # def sparse_cross_entropy_batch(z, y):
+    #   return -np.log(np.array([z[j, y[j]] for j in range(len(y))]))
+    # E = np.sum(sparse_cross_entropy_batch(z, y))
 
-    return cost
+    return np.sum(E)
 
 
 
 #----------------------------------Start-BackWord------------------------------------------------------#
-# def softmax_backword(dA, cache):
-#     Z = cache
-#     dZ = dA * Z
+def softmax_backword(dA, cache):
+    Z = cache
+    dZ = dA
     
-#     return dZ
+    return dZ.T
  
 
 
@@ -172,6 +179,7 @@ def linear_activation_backward(dA, cache, activation):
     return dA_prev, dW, db
 
 def to_full_batch(y, num_classes):
+    y = [int(y) for y in y]
     y_full = np.zeros((len(y), num_classes))
     for j, yj in enumerate(y):
         y_full[j, yj] = 1
@@ -184,12 +192,16 @@ def L_model_backward(AL, Y, caches):
     # print("ALL", AL)
     # print("Y", Y)
     dAL = AL - to_full_batch(Y, len(AL[1]))
-    print("dAL", dAL)
+    # print("dAL", dAL)
     # Lth layer (SIGMOID -> LINEAR) gradients. Inputs: "AL, Y, caches". Outputs: "grads["dAL"], grads["dWL"], grads["dbL"]
     current_cache = caches[L-1]
-    print("current_cache", current_cache)
+
+    #every cache of linear_activation_forward() with "relu" (there are (L-1) or them, indexes from 0 to L-2) 
+    #the cache of linear_activation_forward() with "softmax" (there is one, index L-1)
+
+    # print("current_cache", current_cache) 
     grads["dA" + str(L-1)], grads["dW" + str(L)], grads["db" + str(L)] = linear_activation_backward(dAL, current_cache, activation = "softmax")
-    
+    # print("GRADS", grads)
     for l in reversed(range(L-1)):
         # lth layer: (RELU -> LINEAR) gradients.
         current_cache = caches[l]
@@ -260,24 +272,24 @@ class NeuralWeb:
             parameters['b' + str(l)] = np.zeros((layer_dims[l], 1))
             
             # assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
-            # assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
-
-            
+            # assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))    
         return parameters
 
     def iterations(self, num_iterations):
         for i in range(0, num_iterations):
             AL, caches = L_model_forward(self.X.T, self.initialize)
-            print("YES")
+            # print("Al", AL)
+            # print("YES")
             #FIX coast
-            # cost = compute_cost(AL, self.Y)
+            cost = compute_cost(AL, self.Y)
+            # print("Cost", cost)
 
             grads =  L_model_backward(AL, self.Y, caches)
-
+            # print("GRADS", grads)
             update_parameters(self.initialize, grads, self.learning_rate)
 
         # return AL
-        return self.initialize
+        return self.initialize, cost
 
     def predict(self, X, y, parameters):
         m = X.shape[1]
@@ -291,4 +303,3 @@ class NeuralWeb:
             Final.append(np.argmax(i))
                 
         return Final
-
