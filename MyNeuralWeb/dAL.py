@@ -13,6 +13,6 @@ class dALoss:
     def dAL_classifier(AL, Y):
         return AL - to_full_batch(Y, len(AL[1]))
 
-    def dAL_regr(AL, Y):
+    def dAL_regr(AL, y):
         y = [int(y) for y in y]
-        return AL - y
+        return y - AL

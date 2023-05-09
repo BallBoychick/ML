@@ -1,7 +1,13 @@
 import pandas as pd
 import numpy as np
+from scipy.special import expit
 
 class Actifation_funcs:
+    @staticmethod
+    def sigmoid_scipy(z):
+        A = expit(z)
+        cache = z
+        return A, cache
     @staticmethod
     def softmax(z):
         '''Return the softmax output of a vector.'''
@@ -29,6 +35,13 @@ class Actifation_funcs:
         A = np.maximum(0,Z)
         
         cache = Z 
+        return A, cache
+    
+    @staticmethod
+    def leaky_relu(Z):
+        alpha = 0.1
+        A = np.maximum(alpha*Z, Z)
+        cache = Z
         return A, cache
 
     @staticmethod

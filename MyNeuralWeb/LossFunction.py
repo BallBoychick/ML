@@ -13,4 +13,4 @@ class LossFunction:
     def compute_cost_regr(AL, Y):
         #MSE
         Y = [int(Y) for Y in Y]
-        return np.sum((Y-AL)**2)/len(Y)
+        return np.sum((Y-AL)**2)/(2 * len(Y))
