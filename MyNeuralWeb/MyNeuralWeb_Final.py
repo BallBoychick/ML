@@ -62,7 +62,7 @@ class NeuralWeb:
         # print("AAAAAA", A)
         for l in range(1, L):
             A_prev = A 
-            A, cache = self.linear_activation_forward(A_prev, parameters['W' + str(l)], parameters['b' + str(l)], activation = Actifation_funcs.relu)
+            A, cache = self.linear_activation_forward(A_prev, parameters['W' + str(l)], parameters['b' + str(l)], activation = Actifation_funcs.tanh)
             caches.append(cache)
             # print("AА2", A)
             # print("AFTER_EVERY_ITER", cache)
@@ -112,7 +112,7 @@ class NeuralWeb:
         
         for l in reversed(range(L-1)):
             current_cache = caches[l]
-            dA_prev_temp, dW_temp, db_temp = self.linear_activation_backward(grads["dA" + str(l + 1)], current_cache, activation = Derivative_Actifation_functions.relu_backward)
+            dA_prev_temp, dW_temp, db_temp = self.linear_activation_backward(grads["dA" + str(l + 1)], current_cache, activation = Derivative_Actifation_functions.tanh_derivative)
             grads["dA" + str(l)] = dA_prev_temp
             grads["dW" + str(l + 1)] = dW_temp
             grads["db" + str(l + 1)] = db_temp

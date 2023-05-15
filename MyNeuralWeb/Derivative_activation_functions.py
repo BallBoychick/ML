@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from scipy.special import expit
+import math
 class Derivative_Actifation_functions:
     @staticmethod
     def softmax_backword(dA, cache):
@@ -54,3 +55,8 @@ class Derivative_Actifation_functions:
         return dZ
 
 #(len(z[1]), len(z))
+    def tanh_derivative(dA, cache):
+        Z = cache
+        t = np.tanh(Z)
+        dZ = dA * (1 - t**2)
+        return dZ

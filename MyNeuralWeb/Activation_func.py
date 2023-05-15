@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from scipy.special import expit
+import math
 
 class Actifation_funcs:
     @staticmethod
@@ -48,3 +49,10 @@ class Actifation_funcs:
     def linear_func(Z):
         cache = Z
         return Z, cache
+
+
+    @staticmethod
+    def tanh(Z):
+        cache = Z
+        A = (expit(Z) - expit(-Z)) / (expit(Z) + expit(-Z))
+        return A, cache
