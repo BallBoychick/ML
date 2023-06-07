@@ -90,37 +90,42 @@ if selected2 == "Информация":
 #         plt.legend(loc="lower right")
 #         st.pyplot(fig)
 #         print('')
-# if selected2 == "Предсказания":
+if selected2 == "Предсказания":
     
-#     option = st.selectbox(
-#     'Выберите модель обучения',
-#     ('Knn', 'CatBoostClassifier', 'Keras'))
-#     if option == 'Knn':
-#         model = pickle.load(open('../../models/class_model', 'rb'))
-#     if option == 'CatBoostClassifier':
-#         model = pickle.load(open('../../models/class_model_cat', 'rb'))
-#     if option == 'Keras':
-#         model = tf.keras.models.load_model('../../models/ClassificationModel.h5')
+    option = st.selectbox(
+    'Выберите модель обучения',
+    ('Knn', 'CatBoostClassifier', 'Keras'))
+    if option == 'Knn':
+        model = pickle.load(open('../models/knnpickle_file', 'rb'))
+    # if option == 'CatBoostClassifier':
+    #     model = pickle.load(open('../../models/class_model_cat', 'rb'))
+    # if option == 'Keras':
+    #     model = tf.keras.models.load_model('../../models/ClassificationModel.h5')
         
-#     uploaded_file = st.file_uploader("Choose a file")
-#     df = pd.DataFrame(
-#     [
-#        {"Airline": "UA", "AirportFrom": "IAH", "AirportTo": "CHS", "DayOfWeek":"4","Time":"1195","Length":"131",},
-#      ]
-#     )
-#     edited_df = st.experimental_data_editor(df, num_rows="dynamic")
+    uploaded_file = st.file_uploader("Choose a file", type="csv")
+    # df = pd.DataFrame(
+    # [
+    #    {"Airline": "UA", "AirportFrom": "IAH", "AirportTo": "CHS", "DayOfWeek":"4","Time":"1195","Length":"131",},
+    #  ]
+    # )
+    # edited_df = st.experimental_data_editor(df, num_rows="dynamic")
     
-#     if st.button('Предсказать'):
-#        y_pred = model.predict(preprocessing(edited_df))
-#        st.write(y_pred)
+    if st.button('Предсказать'):
+        df = pd.read_csv(uploaded_file)
+        df.drop(['Unnamed: 0'], axis=1, inplace=True)
+        y = df["Diabetes_012"]
+        X = df.drop(["Diabetes_012"], axis=1)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=1/3)
+        y_pred = model.predict(X_test)
+        st.write(y_pred)
 
-#     if uploaded_file is not None:
-#         upladdata = pd.read_csv(uploaded_file)
-#         print(upladdata)
-#         y_pred = model.predict(preprocessing(upladdata)) 
-#         if len(y_pred.shape)>1:
-#             y_pred = np.argmax(y_pred,axis = 1)
-#         y_pred = pd.DataFrame( y_pred)
-#         y_pred.columns = ['Delay']
-#         ans = pd.concat([upladdata, y_pred],axis =1)
-#         st.write(ans)
+    # if uploaded_file is not None:
+    #     upladdata = pd.read_csv(uploaded_file)
+    #     print(upladdata)
+    #     y_pred = model.predict(preprocessing(upladdata)) 
+    #     if len(y_pred.shape)>1:
+    #         y_pred = np.argmax(y_pred,axis = 1)
+    #     y_pred = pd.DataFrame( y_pred)
+    #     y_pred.columns = ['Delay']
+    #     ans = pd.concat([upladdata, y_pred],axis =1)
+    #     st.write(ans)
