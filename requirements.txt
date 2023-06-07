@@ -4,3 +4,5 @@ pandas
 matplotlib
 seaborn
 tensorflow
+streamlit
+streamlit_option_menu
