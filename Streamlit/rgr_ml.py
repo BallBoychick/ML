@@ -12,6 +12,7 @@ from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 import tensorflow as tf
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
 # def preprocessing(data):
 #     if 'Flight' in data.columns:
@@ -94,13 +95,13 @@ if selected2 == "Предсказания":
     
     option = st.selectbox(
     'Выберите модель обучения',
-    ('Knn', 'CatBoostClassifier', 'Keras'))
+    ('Knn', 'BaggingClassifier', 'Keras'))
     if option == 'Knn':
         model = pickle.load(open('../models/knnpickle_file', 'rb'))
-    # if option == 'CatBoostClassifier':
-    #     model = pickle.load(open('../../models/class_model_cat', 'rb'))
-    # if option == 'Keras':
-    #     model = tf.keras.models.load_model('../../models/ClassificationModel.h5')
+    if option == 'BaggingClassifier':
+        model = pickle.load(open('../models/optimal_bagging_file', 'rb'))
+    if option == 'Keras':
+        model = tf.keras.models.load_model('../models/keras_mode_file.h5')
         
     uploaded_file = st.file_uploader("Choose a file", type="csv")
     # df = pd.DataFrame(
@@ -116,8 +117,18 @@ if selected2 == "Предсказания":
         y = df["Diabetes_012"]
         X = df.drop(["Diabetes_012"], axis=1)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=1/3)
-        y_pred = model.predict(X_test)
-        st.write(y_pred)
+        if option == 'Keras':
+            y_pred_arg = [np.argmax(pred) for pred in model.predict(X_test, verbose=None)]
+            st.write("Look at this accuracy: ")
+            cs2 = accuracy_score(y_test, y_pred_arg)
+            st.write(cs2)
+            st.write(y_pred_arg)
+        else:
+            y_pred = model.predict(X_test)
+            st.write(y_pred)
+            cs = accuracy_score(y_test, y_pred)
+            st.write("Look at this accuracy: ")
+            st.write(cs)
 
     # if uploaded_file is not None:
     #     upladdata = pd.read_csv(uploaded_file)
