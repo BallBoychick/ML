@@ -14,6 +14,9 @@ from sklearn.neighbors import KNeighborsClassifier
 import tensorflow as tf
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
+def prepocessing(data):
+    X = data
+    
 def get_data():
     data = pd.read_csv('../Data/balanced_sclaer_dataset_diabetes.csv')
     data.drop(['Unnamed: 0'], axis=1, inplace=True)
