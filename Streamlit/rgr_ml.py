@@ -60,19 +60,19 @@ if selected2 == "Визуализация":
         fig = px.box(data.iloc[:10000].drop(["Diabetes_012",data.columns[0]],axis=1))
         st.plotly_chart(fig)
     if selected3 == "Box Plot 2.0":
-        group = st.selectbox('Выберите группу для построения Box Plot:', ["Диабет", "Нетдиабета", "ПреДиабет"])
         feature = st.selectbox('Выберите признак для построения графика плотности:', data.columns)
-        if group == "Диабет":
-            ds = data[data["Diabetes_012"] == 2][feature]
-            fig = px.box(ds)
-        if group == "Нетдиабета":
-            ds = data[data["Diabetes_012"] == 0][feature]
-            fig = px.box(ds)
-        else:
-            ds = data[data["Diabetes_012"] == 1][feature]
-            fig = px.box(ds)
-
+        ds = data[data["Diabetes_012"] == 2][feature]
+        ds2 = data[data["Diabetes_012"] == 0][feature]
+        ds3 = data[data["Diabetes_012"] == 1][feature]
+        fig = px.box(ds)
+        fig2 = px.box(ds2)
+        fig3 = px.box(ds3)
+        st.write("DIABET")
         st.plotly_chart(fig)
+        st.write("NODIABET")
+        st.plotly_chart(fig2)
+        st.write("PREDIABET")
+        st.plotly_chart(fig3)
 
 if selected2 == "Предсказания":
     option = st.selectbox(
