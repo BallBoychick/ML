@@ -127,8 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-
-#Tree
-TreeClassifiers
-/models
+models
