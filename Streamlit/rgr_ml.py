@@ -17,7 +17,6 @@ from sklearn.utils import resample
 from imblearn.over_sampling import SMOTE
 
 def prepocessing(data):
-    # X = data
     
     scaler = joblib.load("../models/scaler_for_class")
     df_majority_hight = data[data.Diabetes_012==0.0]
@@ -27,11 +26,10 @@ def prepocessing(data):
     df_minority = data[data.Diabetes_012==2.0]
 
     df_majority_downsampled = resample(df_majority,  
-                                 replace=True,    # sample without replacement
-                                 n_samples=35097,     # to match minority class
-                                 random_state=123) # reproducible results
+                                 replace=True,
+                                 n_samples=35097,
+                                 random_state=123)
  
-    # Combine minority class with downsampled majority class
     df_downsampled = pd.concat([df_majority_downsampled, df_minority])
 
     df_down=df_downsampled.sample(frac=1)
