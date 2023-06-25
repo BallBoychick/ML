@@ -8,3 +8,4 @@ streamlit
 streamlit_option_menu
 import-ipynb
 ipynb
+nltk
