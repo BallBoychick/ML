@@ -16,3 +16,5 @@ https://habr.com/ru/articles/666234/
 https://colab.research.google.com/drive/1Wnmea5qL1LqKYJEXNi8t4fWuAGj5Qx2o?hl=ru_RU#scrollTo=D_TGIKZ0DJQx
 7) Streamlit collab
 https://colab.research.google.com/drive/1hFRaGMTitpkvagaTKpeI2BdBJkrX4wEh#scrollTo=sccSHd4Jjxgu
+8) Analysis data
+https://www.kaggle.com/code/pmarcelino/comprehensive-data-exploration-with-python/notebook#2.-First-things-first:-analysing-'SalePrice'
