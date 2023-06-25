@@ -14,4 +14,5 @@ https://imurgence.com/home/blog/encoding-techniques-in-machine-learning-using-py
 https://habr.com/ru/articles/666234/
 6) Downgrade data lab7
 https://colab.research.google.com/drive/1Wnmea5qL1LqKYJEXNi8t4fWuAGj5Qx2o?hl=ru_RU#scrollTo=D_TGIKZ0DJQx
-7) 
+7) Streamlit collab
+https://colab.research.google.com/drive/1hFRaGMTitpkvagaTKpeI2BdBJkrX4wEh#scrollTo=sccSHd4Jjxgu
