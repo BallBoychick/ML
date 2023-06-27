@@ -18,3 +18,28 @@ https://colab.research.google.com/drive/1Wnmea5qL1LqKYJEXNi8t4fWuAGj5Qx2o?hl=ru_
 https://colab.research.google.com/drive/1hFRaGMTitpkvagaTKpeI2BdBJkrX4wEh#scrollTo=sccSHd4Jjxgu
 8) Analysis data
 https://www.kaggle.com/code/pmarcelino/comprehensive-data-exploration-with-python/notebook#2.-First-things-first:-analysing-'SalePrice'
+
+
+##
+Министратегия
+1 модуль
+1) Просмотр head tail
+2) is null sum, info
+3) drop dublicates, лишние признаки
+4) Заполняем  nan базово
+5) с целевым, и посмотреть где преобразовать
+6) describe
+7) plots, heatmap(сделать вывод, какие коррелируют) 
+7.1) save data
+8) Масштабирование
+9) Save масштаб
+2 модуль 
+1) сплитим, балансируем
+2) PCA, RFE, график по дереву, KBest
+3) Выбираем топ
+4) на основе оставшихся признаков обучаем модель 
+5) Выбираем 3 и берем лучшую 
+6) Собираю pipeline
+
+3 модуль 
+Делаем streamlit
